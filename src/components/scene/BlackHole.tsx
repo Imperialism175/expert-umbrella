@@ -1,13 +1,11 @@
 import { useFrame } from '@react-three/fiber'
-import { useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { Vector2, type ShaderMaterial } from 'three'
 import { useDescentStore } from '@/state/descentStore'
 import { clampSceneHeight, sceneView } from './sceneView'
 import fragmentShader from './shaders/blackHole.frag.glsl?raw'
 import vertexShader from './shaders/fullscreen.vert.glsl?raw'
 
-/** Число шагов луча и длина шага относительно расстояния до дыры. */
-const QUALITY = { STEPS: 150, STEP_SCALE: '0.065' }
 /** Скорость, с которой камера догоняет заданную высоту, 1/с. */
 const FOLLOW_RATE = 3
 function createUniforms() {
@@ -26,7 +24,25 @@ type Uniforms = ReturnType<typeof createUniforms>
  * Полноэкранный квад, на котором шейдер рисует чёрную дыру. Высоту
  * наблюдателя читает из хранилища спуска на каждом кадре, минуя рендер React.
  */
-export function BlackHole() {
+interface BlackHoleProps {
+  /** Максимум шагов трассировки луча. */
+  steps: number
+  /** Длина шага относительно расстояния до дыры. */
+  stepScale: string
+  /** Отдавать линейный цвет: в sRGB его переведёт постобработка. */
+  linearOutput: boolean
+}
+
+export function BlackHole({ steps, stepScale, linearOutput }: BlackHoleProps) {
+  // Настройки качества вшиваются в шейдер; при их смене материал создаётся заново.
+  const defines = useMemo(
+    () => ({
+      STEPS: steps,
+      STEP_SCALE: stepScale,
+      ...(linearOutput ? { LINEAR_OUTPUT: '' } : {}),
+    }),
+    [steps, stepScale, linearOutput],
+  )
   const [initialUniforms] = useState(createUniforms)
   const [reducedMotion] = useState(
     () => window.matchMedia('(prefers-reduced-motion: reduce)').matches,
@@ -60,11 +76,12 @@ export function BlackHole() {
     <mesh frustumCulled={false}>
       <planeGeometry args={[2, 2]} />
       <shaderMaterial
+        key={JSON.stringify(defines)}
         ref={material}
         vertexShader={vertexShader}
         fragmentShader={fragmentShader}
         uniforms={initialUniforms}
-        defines={QUALITY}
+        defines={defines}
         depthTest={false}
         depthWrite={false}
       />

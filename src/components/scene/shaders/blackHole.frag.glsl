@@ -260,7 +260,10 @@ void main() {
   }
 
   color = 1.0 - exp(-color * 1.15);
+#ifndef LINEAR_OUTPUT
+  // Без постобработки переводим в sRGB сами.
   color = pow(color, vec3(1.0 / 2.2));
+#endif
   // Лёгкий шум против полос на плавных градиентах.
   color += (hash13(vec3(gl_FragCoord.xy, uTime)) - 0.5) / 255.0;
   gl_FragColor = vec4(color, 1.0);
