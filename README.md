@@ -23,6 +23,20 @@ Vite · React 19 · TypeScript · Tailwind CSS v4 · Three.js + React Three Fibe
 | `npm run typecheck` | проверка типов |
 | `npm run format` | форматирование Prettier |
 
+## Деплой на GitHub Pages
+
+Сайт публикуется автоматически: при каждом пуше в `main` workflow [.github/workflows/deploy.yml](.github/workflows/deploy.yml) запускает линтер и тесты, собирает проект и выкладывает `dist/` на GitHub Pages.
+
+Один раз нужно включить Pages в репозитории: **Settings → Pages → Build and deployment → Source: GitHub Actions**.
+
+Сайт лежит в подпапке (`/имя-репозитория/`), поэтому workflow передаёт сборке базовый путь через переменную `BASE_PATH`. Проверить такую сборку локально:
+
+```powershell
+$env:BASE_PATH = '/expert-umbrella/'; npm run build; npm run preview
+```
+
+В Git Bash на Windows так делать не стоит: он переписывает переменные, похожие на пути, и сборка получит неверный адрес.
+
 ## Структура
 
 ```

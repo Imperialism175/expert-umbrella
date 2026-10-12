@@ -5,6 +5,9 @@ import { defineConfig } from 'vitest/config'
 
 // https://vite.dev/config/
 export default defineConfig({
+  // На GitHub Pages сайт лежит в подпапке (/имя-репозитория/); путь задаёт
+  // workflow деплоя. Локально и на собственном домене — корень.
+  base: process.env.BASE_PATH ?? '/',
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
