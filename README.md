@@ -17,6 +17,7 @@ Vite · React 19 · TypeScript · Tailwind CSS v4 · Vitest + Testing Library ·
 | `npm run preview` | локальный просмотр сборки |
 | `npm run test` | тесты (однократно) |
 | `npm run test:watch` | тесты в режиме наблюдения |
+| `npm run coverage` | тесты с отчётом о покрытии |
 | `npm run lint` | линтер |
 | `npm run typecheck` | проверка типов |
 | `npm run format` | форматирование Prettier |
@@ -36,4 +37,4 @@ src/
 
 ## Статус
 
-Этап 1 (инициализация) выполнен. Далее — Этап 2: математическое ядро.
+Этапы 1 (инициализация) и 2 (математическое ядро) выполнены. Далее — Этап 3: базовый UI.

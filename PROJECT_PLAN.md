@@ -351,12 +351,12 @@ x = r_s / r
 
 ### Этап 2 — Математическое ядро
 
-- [ ] `constants.ts`, `units.ts` (таблицы единиц, `toSI` / `fromSI`)
-- [ ] `schwarzschild.ts`: r_s, оба фактора замедления, устойчивые формулы из 2.6, производные величины из 2.5
-- [ ] `compute.ts`: единая точка входа, типы `Result` / `PhysicsError`, все коды из 2.7
-- [ ] `presets.ts`
-- [ ] `format/duration.ts`, `format/number.ts`
-- [ ] Тесты: все контрольные значения из 2.8, граничные случаи, property-тесты, форматирование
+- [x] `constants.ts`, `units.ts` (таблицы единиц, `toSI` / `fromSI`)
+- [x] `schwarzschild.ts`: r_s, оба фактора замедления, устойчивые формулы из 2.6, производные величины из 2.5
+- [x] `compute.ts`: единая точка входа, типы `Result` / `PhysicsError`, все коды из 2.7
+- [x] `presets.ts`
+- [x] `format/duration.ts`, `format/number.ts`
+- [x] Тесты: все контрольные значения из 2.8, граничные случаи, property-тесты, форматирование
 
 **Готово, когда:** все тесты зелёные, покрытие `physics/` и `format/` близко к 100 %, в папке `physics/` нет импортов React.
 
