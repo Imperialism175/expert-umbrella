@@ -9,9 +9,7 @@ import { DEFAULT_PRESET_ID, PRESETS } from '@/physics/presets'
 import { schwarzschildRadius } from '@/physics/schwarzschild'
 import {
   gravParamToMass,
-  lengthToMeters,
   massToGravParam,
-  metersToLength,
   secondsToTime,
   timeToSeconds,
   type LengthUnit,
@@ -19,13 +17,17 @@ import {
   type TimeUnit,
 } from '@/physics/units'
 
-export type FieldName = 'time' | 'mass' | 'distance'
+export type FieldName = 'time' | 'mass'
 
-/** В полях хранится введённый текст как есть — число из него получается при расчёте. */
+/**
+ * Состояние пульта. В числовых полях хранится введённый текст как есть —
+ * число из него получается при расчёте. Само расстояние живёт в хранилище
+ * спуска (descentStore); здесь — только то, в каком виде его показывать.
+ */
 export interface CalculatorState {
   time: { text: string; unit: TimeUnit }
   mass: { text: string; unit: MassUnit }
-  distance: { text: string; unit: LengthUnit; from: DistanceOrigin }
+  distance: { unit: LengthUnit; from: DistanceOrigin }
   mode: ObjectMode
   direction: Direction
 }
@@ -45,7 +47,7 @@ const defaultPreset = PRESETS.find((preset) => preset.id === DEFAULT_PRESET_ID)!
 export const initialState: CalculatorState = {
   time: { text: '1', unit: 'yr' },
   mass: { text: toInputText(defaultPreset.solarMasses), unit: 'Msun' },
-  distance: { text: '1', unit: 'rs', from: 'horizon' },
+  distance: { unit: 'rs', from: 'horizon' },
   mode: 'static',
   direction: 'earthToHole',
 }
@@ -58,31 +60,30 @@ export function horizonRadius(state: CalculatorState): number | null {
   return Number.isFinite(rs) && rs > 0 ? rs : null
 }
 
-export function toComputeInput(state: CalculatorState): ComputeInput {
+/**
+ * Собирает вход для расчёта. Высота передаётся в радиусах Шварцшильда
+ * от горизонта — в этом виде ядро считает без потери точности.
+ */
+export function toComputeInput(
+  state: CalculatorState,
+  heightInRs: number,
+): ComputeInput {
   const value = (text: string) => parseNumber(text) ?? NaN
   return {
     time: { value: value(state.time.text), unit: state.time.unit },
     mass: { value: value(state.mass.text), unit: state.mass.unit },
-    distance: {
-      value: value(state.distance.text),
-      unit: state.distance.unit,
-      from: state.distance.from,
-    },
+    distance: { value: heightInRs, unit: 'rs', from: 'horizon' },
     mode: state.mode,
     direction: state.direction,
   }
 }
 
 /** Пересчитывает текст поля; если пересчитать нельзя, оставляет его как есть. */
-function convertText(
-  text: string,
-  convert: (value: number) => number | null,
-): string {
+function convertText(text: string, convert: (value: number) => number): string {
   const value = parseNumber(text)
   if (value === null) return text
   const converted = convert(value)
-  if (converted === null || !Number.isFinite(converted)) return text
-  return toInputText(converted)
+  return Number.isFinite(converted) ? toInputText(converted) : text
 }
 
 export function calculatorReducer(
@@ -123,54 +124,11 @@ export function calculatorReducer(
       }
     }
 
-    case 'setDistanceUnit': {
-      const { text, unit } = state.distance
-      const rs = horizonRadius(state)
-      const needsRs = unit === 'rs' || action.unit === 'rs'
-      return {
-        ...state,
-        distance: {
-          ...state.distance,
-          unit: action.unit,
-          text: convertText(text, (value) =>
-            needsRs && rs === null
-              ? null
-              : metersToLength(
-                  lengthToMeters(value, unit, rs ?? 1),
-                  action.unit,
-                  rs ?? 1,
-                ),
-          ),
-        },
-      }
-    }
+    case 'setDistanceUnit':
+      return { ...state, distance: { ...state.distance, unit: action.unit } }
 
-    // Смена точки отсчёта сохраняет положение объекта: 2 rs от центра = 1 rs от горизонта.
-    case 'setOrigin': {
-      if (action.from === state.distance.from) return state
-      const { text, unit } = state.distance
-      const rs = horizonRadius(state)
-      const sign = action.from === 'horizon' ? -1 : 1
-      return {
-        ...state,
-        distance: {
-          unit,
-          from: action.from,
-          text: convertText(text, (value) => {
-            if (rs === null) return null
-            const shifted =
-              unit === 'rs'
-                ? value + sign
-                : metersToLength(
-                    lengthToMeters(value, unit, rs) + sign * rs,
-                    unit,
-                    rs,
-                  )
-            return shifted > 0 ? shifted : null
-          }),
-        },
-      }
-    }
+    case 'setOrigin':
+      return { ...state, distance: { ...state.distance, from: action.from } }
 
     case 'setMode':
       return { ...state, mode: action.mode }

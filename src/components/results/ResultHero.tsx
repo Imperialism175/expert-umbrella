@@ -18,7 +18,7 @@ function slowdownText(slowdown: number): string {
   return `${text} ${word}`
 }
 
-/** Главная фраза результата: сколько времени прошло на Земле и у чёрной дыры. */
+/** Главная фраза результата: сколько времени прошло на Земле и на корабле. */
 export function ResultHero({ result, direction }: ResultHeroProps) {
   const earth = (
     <strong className="font-mono font-semibold text-earth">
@@ -31,27 +31,29 @@ export function ResultHero({ result, direction }: ResultHeroProps) {
     </strong>
   )
   const difference = formatDuration(result.difference)
+  // Пока часы идут почти одинаково, слова «всего» и «уже» были бы неправдой.
+  const nearlyEqual = result.regime === 'flat' || result.regime === 'weak'
 
   return (
     <div>
       <p className="text-lg leading-snug sm:text-xl">
         {direction === 'earthToHole' ? (
           <>
-            {ru.result.whileEarth} {earth},<br />
-            {ru.result.atHole}{' '}
-            <span className="text-2xl sm:text-3xl">{hole}</span>
+            {ru.result.earthPasses} {earth},<br />
+            {nearlyEqual ? ru.result.onShip : ru.result.onShipOnly}{' '}
+            <span className="text-2xl">{hole}</span>
           </>
         ) : (
           <>
-            {ru.result.whileHole} {hole},<br />
-            {ru.result.onEarth}{' '}
-            <span className="text-2xl sm:text-3xl">{earth}</span>
+            {ru.result.shipPasses} {hole},<br />
+            {nearlyEqual ? ru.result.onEarth : ru.result.onEarthAlready}{' '}
+            <span className="text-2xl">{earth}</span>
           </>
         )}
       </p>
       <p className="mt-3 text-sm text-ink-muted">
-        {result.regime === 'flat'
-          ? `${ru.result.flatSummary} · ${ru.result.flatDifference} ${difference}`
+        {nearlyEqual
+          ? `${ru.result.sameSummary} · ${ru.result.sameDifference} ${difference}`
           : `${ru.result.slowerPrefix} ${slowdownText(result.slowdown)} ${ru.result.slowerSuffix} · ${ru.result.difference} ${difference}`}
       </p>
     </div>

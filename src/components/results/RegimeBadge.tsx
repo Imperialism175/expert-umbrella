@@ -3,6 +3,7 @@ import type { Regime, Warning } from '@/physics/compute'
 
 const regimeStyle: Record<Regime, string> = {
   flat: 'border-earth/50 text-earth',
+  weak: 'border-earth/50 text-earth',
   noticeable: 'border-hole/50 text-hole',
   extreme: 'border-danger/60 text-danger',
 }

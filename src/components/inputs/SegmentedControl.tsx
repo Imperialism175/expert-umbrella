@@ -25,7 +25,7 @@ export function SegmentedControl<T extends string>({
         {label}
       </legend>
       <div
-        className={`grid grid-flow-col auto-cols-fr gap-1 rounded-xl border border-line bg-void-raised p-1 ${
+        className={`grid grid-flow-col auto-cols-fr gap-1 rounded-xl border border-line bg-white/[0.04] p-1 ${
           hideLabel ? '' : 'mt-2'
         }`}
       >

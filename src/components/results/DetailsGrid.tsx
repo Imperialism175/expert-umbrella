@@ -11,7 +11,7 @@ const inC = (speed: number) => `${formatNumber(speed / C, 4)} c`
 
 /** Вдали от дыры фактор неотличим от 1, поэтому показываем его как «1 − δ». */
 function factorText(result: ComputeResult): string {
-  return result.regime === 'flat'
+  return result.regime === 'flat' || result.regime === 'weak'
     ? `1 − ${formatNumber(result.deficit)}`
     : formatNumber(result.factor, 6)
 }
@@ -46,7 +46,7 @@ export function DetailsGrid({ result }: DetailsGridProps) {
       <h3 id="details-heading" className="sr-only">
         {ru.details.heading}
       </h3>
-      <dl className="grid grid-cols-2 gap-x-6 gap-y-3 xl:grid-cols-4">
+      <dl className="grid grid-cols-2 gap-x-4 gap-y-3 xl:grid-cols-1">
         {items.map(([label, value]) => (
           <div key={label}>
             <dt className="text-xs text-ink-muted">{label}</dt>

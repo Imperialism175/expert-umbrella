@@ -1,49 +1,28 @@
-import { InputPanel } from '@/components/inputs/InputPanel'
-import { ResultPanel } from '@/components/results/ResultPanel'
+import { Hud } from '@/components/hud/Hud'
 import { Scene } from '@/components/scene/Scene'
 import { useCalculator } from '@/hooks/useCalculator'
-import { ru } from '@/i18n/ru'
+import { DescentTrack } from '@/scroll/DescentTrack'
+import { WaypointCaption } from '@/scroll/WaypointCaption'
 
 /*
- * Раскладка — сетка. На телефоне блоки идут друг за другом: сцена, ввод,
- * результат. На десктопе ввод занимает левую колонку, сцена — всю правую,
- * а результат лежит поверх сцены внизу.
+ * Страница — спуск корабля к чёрной дыре. Сцена и интерфейс закреплены на
+ * экране, а прокручивается только невидимая дорожка: её прогресс задаёт
+ * высоту корабля над горизонтом.
  */
 function App() {
-  const { state, dispatch, outcome, horizon } = useCalculator()
+  const { state, dispatch, horizon } = useCalculator()
 
   return (
-    <main className="grid min-h-dvh lg:h-dvh lg:grid-cols-[420px_1fr] lg:grid-rows-[1fr_auto]">
-      <div className="h-[35dvh] min-h-56 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:h-auto lg:min-h-0">
-        <Scene
-          heightInRs={
-            outcome.ok
-              ? outcome.result.heightAboveHorizon /
-                outcome.result.schwarzschildRadius
-              : null
-          }
-        />
+    <>
+      <div className="fixed inset-0 z-0">
+        <Scene />
       </div>
-
-      <div className="flex flex-col gap-6 p-4 sm:p-6 lg:col-start-1 lg:row-span-2 lg:row-start-1 lg:overflow-y-auto lg:border-r lg:border-line">
-        <header>
-          <h1 className="text-2xl font-semibold tracking-tight">
-            {ru.app.title}
-          </h1>
-          <p className="mt-2 text-sm text-ink-muted">{ru.app.subtitle}</p>
-        </header>
-        <InputPanel
-          state={state}
-          dispatch={dispatch}
-          outcome={outcome}
-          horizon={horizon}
-        />
-      </div>
-
-      <div className="z-10 p-4 pt-0 sm:p-6 sm:pt-0 lg:col-start-2 lg:row-start-2 lg:max-h-dvh lg:self-end lg:overflow-y-auto lg:pt-6">
-        <ResultPanel outcome={outcome} direction={state.direction} />
-      </div>
-    </main>
+      <DescentTrack />
+      <WaypointCaption />
+      <main>
+        <Hud state={state} dispatch={dispatch} horizon={horizon} />
+      </main>
+    </>
   )
 }
 

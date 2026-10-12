@@ -16,15 +16,28 @@ function run(
   return actions.reduce(calculatorReducer, state)
 }
 
-function factor(state: CalculatorState): number {
-  const outcome = compute(toComputeInput(state))
+function factor(state: CalculatorState, heightInRs: number): number {
+  const outcome = compute(toComputeInput(state, heightInRs))
   if (!outcome.ok) throw new Error(outcome.error.code)
   return outcome.result.factor
 }
 
-describe('начальное состояние', () => {
-  it('даёт корректный расчёт: 1 rs над горизонтом Стрельца A*', () => {
-    expect(factor(initialState)).toBeCloseTo(Math.SQRT1_2, 12)
+describe('вход для расчёта', () => {
+  it('высота передаётся в rs от горизонта', () => {
+    expect(toComputeInput(initialState, 1).distance).toEqual({
+      value: 1,
+      unit: 'rs',
+      from: 'horizon',
+    })
+    expect(factor(initialState, 1)).toBeCloseTo(Math.SQRT1_2, 12)
+  })
+
+  it('не зависит от того, в каком виде расстояние показано в поле', () => {
+    const state = run([
+      { type: 'setDistanceUnit', unit: 'km' },
+      { type: 'setOrigin', from: 'center' },
+    ])
+    expect(factor(state, 1)).toBe(factor(initialState, 1))
   })
 })
 
@@ -32,7 +45,7 @@ describe('ввод текста', () => {
   it('сохраняет текст как есть, даже некорректный', () => {
     const state = run([{ type: 'setText', field: 'mass', text: '4,3e' }])
     expect(state.mass.text).toBe('4,3e')
-    expect(toComputeInput(state).mass.value).toBeNaN()
+    expect(toComputeInput(state, 1).mass.value).toBeNaN()
     expect(horizonRadius(state)).toBeNull()
   })
 })
@@ -52,12 +65,6 @@ describe('смена единиц сохраняет физическую вел
     expect(back.mass.text).toBe('4300000')
   })
 
-  it('расстояние: rs → км не меняет результат', () => {
-    const state = run([{ type: 'setDistanceUnit', unit: 'km' }])
-    expect(state.distance.unit).toBe('km')
-    expect(factor(state)).toBeCloseTo(factor(initialState), 8)
-  })
-
   it('некорректный текст при смене единицы не трогается', () => {
     const state = run([
       { type: 'setText', field: 'time', text: 'abc' },
@@ -65,49 +72,17 @@ describe('смена единиц сохраняет физическую вел
     ])
     expect(state.time).toEqual({ text: 'abc', unit: 'd' })
   })
-
-  it('расстояние в rs нельзя пересчитать без массы — текст остаётся', () => {
-    const state = run([
-      { type: 'setText', field: 'mass', text: '' },
-      { type: 'setDistanceUnit', unit: 'km' },
-    ])
-    expect(state.distance).toMatchObject({ text: '1', unit: 'km' })
-  })
-})
-
-describe('точка отсчёта', () => {
-  it('переключение сохраняет положение объекта', () => {
-    const fromCenter = run([{ type: 'setOrigin', from: 'center' }])
-    expect(fromCenter.distance).toMatchObject({ text: '2', from: 'center' })
-    expect(factor(fromCenter)).toBeCloseTo(factor(initialState), 12)
-
-    const back = run([{ type: 'setOrigin', from: 'horizon' }], fromCenter)
-    expect(back.distance).toMatchObject({ text: '1', from: 'horizon' })
-  })
-
-  it('работает и в абсолютных единицах', () => {
-    const state = run([
-      { type: 'setDistanceUnit', unit: 'km' },
-      { type: 'setOrigin', from: 'center' },
-    ])
-    expect(factor(state)).toBeCloseTo(factor(initialState), 8)
-  })
-
-  it('точку под горизонтом не пересчитывает', () => {
-    const state = run([
-      { type: 'setOrigin', from: 'center' },
-      { type: 'setText', field: 'distance', text: '0,5' },
-      { type: 'setOrigin', from: 'horizon' },
-    ])
-    expect(state.distance).toMatchObject({ text: '0,5', from: 'horizon' })
-  })
-
-  it('повторный выбор той же точки ничего не меняет', () => {
-    expect(run([{ type: 'setOrigin', from: 'horizon' }])).toBe(initialState)
-  })
 })
 
 describe('остальные действия', () => {
+  it('вид расстояния: единица и точка отсчёта', () => {
+    const state = run([
+      { type: 'setDistanceUnit', unit: 'ly' },
+      { type: 'setOrigin', from: 'center' },
+    ])
+    expect(state.distance).toEqual({ unit: 'ly', from: 'center' })
+  })
+
   it('пресет задаёт массу в массах Солнца', () => {
     const state = run([
       { type: 'setMassUnit', unit: 'kg' },

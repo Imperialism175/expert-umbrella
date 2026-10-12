@@ -7,7 +7,7 @@
 
 ## Стек
 
-Vite · React 19 · TypeScript · Tailwind CSS v4 · Vitest + Testing Library · oxlint · Prettier
+Vite · React 19 · TypeScript · Tailwind CSS v4 · Three.js + React Three Fiber · GSAP ScrollTrigger · Motion · zustand · Vitest + Testing Library · oxlint · Prettier
 
 ## Команды
 
@@ -30,7 +30,8 @@ src/
 ├── physics/      # расчётное ядро: чистый TypeScript, без React
 ├── format/       # форматирование длительностей и чисел
 ├── state/        # редьюсер калькулятора, состояние в URL
-├── components/   # inputs/, results/, scene/, layout/
+├── scroll/       # дорожка скролла и вехи спуска
+├── components/   # hud/, inputs/, results/, scene/
 ├── hooks/
 ├── i18n/         # строки интерфейса
 └── test/         # настройка тестового окружения
@@ -38,4 +39,4 @@ src/
 
 ## Статус
 
-Этапы 1–3 (инициализация, математическое ядро, базовый UI) выполнены. Далее — Этап 4: интерактив и анимации.
+Этапы 1–3 плана выполнены. Из дизайн-системы готовы D2 (3D-сцена), D3 (спуск по скроллу) и основная часть D1 (HUD, шрифты, токены). Далее — D4: звёздная пыль, постобработка, уровни качества.

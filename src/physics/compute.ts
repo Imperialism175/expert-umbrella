@@ -32,7 +32,7 @@ export interface ComputeInput {
   direction: Direction
 }
 
-export type Regime = 'flat' | 'noticeable' | 'extreme'
+export type Regime = 'flat' | 'weak' | 'noticeable' | 'extreme'
 export type Warning = 'UNSTABLE_ORBIT' | 'LETHAL_TIDES' | 'LETHAL_ACCELERATION'
 
 export interface ComputeResult {
@@ -88,6 +88,8 @@ export type ComputeOutcome =
 
 /** Ниже этого отличия factor от 1 пространство считаем почти плоским. */
 export const FLAT_DEFICIT = 1e-9
+/** Ниже этого отличия замедление слабое: «в 1 раз медленнее» после округления. */
+export const WEAK_DEFICIT = 0.005
 /** Ниже этого factor замедление считаем экстремальным. */
 export const EXTREME_FACTOR = 0.01
 /** Грубые пороги опасности для человека. */
@@ -158,6 +160,7 @@ export function compute(input: ComputeInput): ComputeOutcome {
 
   let regime: Regime = 'noticeable'
   if (deficit < FLAT_DEFICIT) regime = 'flat'
+  else if (deficit < WEAK_DEFICIT) regime = 'weak'
   else if (factor < EXTREME_FACTOR) regime = 'extreme'
 
   return {

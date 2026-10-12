@@ -22,20 +22,15 @@ class SceneBoundary extends Component<
   }
 }
 
-interface SceneProps {
-  /** Высота наблюдателя над горизонтом, в rs; null — если расчёта нет. */
-  heightInRs: number | null
-}
-
 /** Чёрная дыра: WebGL-сцена там, где она доступна, иначе статичная картинка. */
-export function Scene({ heightInRs }: SceneProps) {
+export function Scene() {
   if (!webglAvailable) return <StaticFallback />
 
   return (
     <SceneBoundary fallback={<StaticFallback />}>
       <Suspense fallback={<StaticFallback />}>
         <div role="img" aria-label={ru.scene.label} className="h-full w-full">
-          <SpaceCanvas heightInRs={heightInRs} />
+          <SpaceCanvas />
         </div>
       </Suspense>
     </SceneBoundary>

@@ -94,6 +94,7 @@ describe('слабое поле', () => {
       distance: { value: 695_700, unit: 'km', from: 'center' },
     })
     expect(result.deficit).toBeCloseTo(2.1225e-6, 9)
+    expect(result.regime).toBe('weak')
     expect(result.difference).toBeGreaterThan(66.5)
     expect(result.difference).toBeLessThan(67.5)
   })
