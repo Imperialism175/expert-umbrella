@@ -1,46 +1,42 @@
+import { InputPanel } from '@/components/inputs/InputPanel'
+import { ResultPanel } from '@/components/results/ResultPanel'
 import { StaticFallback } from '@/components/scene/StaticFallback'
+import { useCalculator } from '@/hooks/useCalculator'
 import { ru } from '@/i18n/ru'
 
-const panel = 'rounded-panel border border-line bg-panel p-6 backdrop-blur-md'
-
+/*
+ * Раскладка — сетка. На телефоне блоки идут друг за другом: сцена, ввод,
+ * результат. На десктопе ввод занимает левую колонку, сцена — всю правую,
+ * а результат лежит поверх сцены внизу.
+ */
 function App() {
+  const { state, dispatch, outcome, horizon } = useCalculator()
+
   return (
-    <div className="flex min-h-dvh flex-col lg:h-dvh lg:flex-row">
-      <aside className="order-2 flex flex-col gap-6 p-4 sm:p-6 lg:order-1 lg:w-[420px] lg:shrink-0 lg:overflow-y-auto">
+    <main className="grid min-h-dvh lg:h-dvh lg:grid-cols-[420px_1fr] lg:grid-rows-[1fr_auto]">
+      <div className="h-[35dvh] min-h-56 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:h-auto lg:min-h-0">
+        <StaticFallback />
+      </div>
+
+      <div className="flex flex-col gap-6 p-4 sm:p-6 lg:col-start-1 lg:row-span-2 lg:row-start-1 lg:overflow-y-auto lg:border-r lg:border-line">
         <header>
           <h1 className="text-2xl font-semibold tracking-tight">
             {ru.app.title}
           </h1>
           <p className="mt-2 text-sm text-ink-muted">{ru.app.subtitle}</p>
         </header>
+        <InputPanel
+          state={state}
+          dispatch={dispatch}
+          outcome={outcome}
+          horizon={horizon}
+        />
+      </div>
 
-        <section aria-labelledby="inputs-heading" className={panel}>
-          <h2
-            id="inputs-heading"
-            className="text-xs font-medium tracking-widest text-ink-muted uppercase"
-          >
-            {ru.inputs.heading}
-          </h2>
-          <p className="mt-4 text-sm text-ink-muted">{ru.inputs.placeholder}</p>
-        </section>
-
-        <section aria-labelledby="result-heading" className={panel}>
-          <h2
-            id="result-heading"
-            className="text-xs font-medium tracking-widest text-ink-muted uppercase"
-          >
-            {ru.result.heading}
-          </h2>
-          <p className="mt-3 font-mono text-lg text-hole">
-            {ru.result.placeholder}
-          </p>
-        </section>
-      </aside>
-
-      <main className="relative order-1 h-[35dvh] min-h-64 lg:order-2 lg:h-auto lg:flex-1">
-        <StaticFallback />
-      </main>
-    </div>
+      <div className="z-10 p-4 pt-0 sm:p-6 sm:pt-0 lg:col-start-2 lg:row-start-2 lg:max-h-dvh lg:self-end lg:overflow-y-auto lg:pt-6">
+        <ResultPanel outcome={outcome} direction={state.direction} />
+      </div>
+    </main>
   )
 }
 
