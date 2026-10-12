@@ -28,6 +28,18 @@ export function orbitFactor(h: number, rs: number): number {
   return Math.sqrt((2 * h - rs) / (2 * (h + rs)))
 }
 
+/**
+ * Угловой радиус тени чёрной дыры на небе неподвижного наблюдателя, рад:
+ * sin α = (√27/2)·(rs/r)·√(1 − rs/r). На фотонной сфере (r = 1,5 rs) тень
+ * занимает ровно половину неба, у горизонта — всё небо.
+ */
+export function shadowAngularRadius(h: number, rs: number): number {
+  const r = h + rs
+  const sine = Math.min(1, (Math.sqrt(27) / 2) * (rs / r) * Math.sqrt(h / r))
+  const angle = Math.asin(sine)
+  return 2 * h >= rs ? angle : Math.PI - angle
+}
+
 /** Скорость убегания, м/с. */
 export function escapeVelocity(h: number, rs: number): number {
   return C * Math.sqrt(rs / (h + rs))

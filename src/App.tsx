@@ -1,6 +1,6 @@
 import { InputPanel } from '@/components/inputs/InputPanel'
 import { ResultPanel } from '@/components/results/ResultPanel'
-import { StaticFallback } from '@/components/scene/StaticFallback'
+import { Scene } from '@/components/scene/Scene'
 import { useCalculator } from '@/hooks/useCalculator'
 import { ru } from '@/i18n/ru'
 
@@ -15,7 +15,14 @@ function App() {
   return (
     <main className="grid min-h-dvh lg:h-dvh lg:grid-cols-[420px_1fr] lg:grid-rows-[1fr_auto]">
       <div className="h-[35dvh] min-h-56 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:h-auto lg:min-h-0">
-        <StaticFallback />
+        <Scene
+          heightInRs={
+            outcome.ok
+              ? outcome.result.heightAboveHorizon /
+                outcome.result.schwarzschildRadius
+              : null
+          }
+        />
       </div>
 
       <div className="flex flex-col gap-6 p-4 sm:p-6 lg:col-start-1 lg:row-span-2 lg:row-start-1 lg:overflow-y-auto lg:border-r lg:border-line">

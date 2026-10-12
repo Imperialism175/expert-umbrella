@@ -7,6 +7,7 @@ import {
   orbitalSpeed,
   orbitFactor,
   schwarzschildRadius,
+  shadowAngularRadius,
   staticFactor,
 } from '../schwarzschild'
 
@@ -58,6 +59,34 @@ describe('круговая орбита', () => {
   it('период Земли вокруг Солнца — около года', () => {
     const days = orbitalPeriod(GM_SUN, AU) / 86_400
     expect(days).toBeCloseTo(365.26, 1)
+  })
+})
+
+describe('тень чёрной дыры', () => {
+  const rs = 1000
+
+  it('вдали угловой радиус тени — (√27/2)·rs/r', () => {
+    expect(shadowAngularRadius(1e6 * rs, rs)).toBeCloseTo(
+      Math.sqrt(27) / 2 / 1e6,
+      10,
+    )
+  })
+
+  it('на фотонной сфере тень занимает половину неба', () => {
+    expect(shadowAngularRadius(rs / 2, rs)).toBeCloseTo(Math.PI / 2, 6)
+  })
+
+  it('у горизонта тень закрывает почти всё небо', () => {
+    expect(shadowAngularRadius(1e-6 * rs, rs)).toBeCloseTo(Math.PI, 2)
+  })
+
+  it('растёт монотонно при спуске', () => {
+    let previous = 0
+    for (let exponent = 3; exponent >= -4; exponent -= 0.25) {
+      const angle = shadowAngularRadius(10 ** exponent * rs, rs)
+      expect(angle).toBeGreaterThan(previous)
+      previous = angle
+    }
   })
 })
 
