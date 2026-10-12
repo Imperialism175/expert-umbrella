@@ -1,9 +1,13 @@
+import { motion } from 'motion/react'
 import { useId, type ReactNode } from 'react'
 import { ru } from '@/i18n/ru'
+import { entrance } from './entrance'
 
 interface HudPanelProps {
   title: string
   className?: string
+  /** Задержка появления при загрузке, с. */
+  delay?: number
   /** Кнопка закрытия; видна только на узких экранах, где панель — шторка. */
   onClose?: () => void
   children: ReactNode
@@ -13,13 +17,18 @@ interface HudPanelProps {
 export function HudPanel({
   title,
   className = '',
+  delay = 0,
   onClose,
   children,
 }: HudPanelProps) {
   const headingId = useId()
 
   return (
-    <section aria-labelledby={headingId} className={`hud-panel ${className}`}>
+    <motion.section
+      {...entrance(delay)}
+      aria-labelledby={headingId}
+      className={`hud-panel ${className}`}
+    >
       <div className="mb-4 flex items-center gap-3">
         <h2 id={headingId} className="hud-label flex-1">
           {title}
@@ -36,6 +45,6 @@ export function HudPanel({
         )}
       </div>
       {children}
-    </section>
+    </motion.section>
   )
 }

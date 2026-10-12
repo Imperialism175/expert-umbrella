@@ -10,8 +10,16 @@ import { create } from 'zustand'
 /** Диапазон дорожки скролла: от 1000 rs до 0,0001 rs над горизонтом. */
 export const MAX_LOG_HEIGHT = 3
 export const MIN_LOG_HEIGHT = -4
-/** Высота, пока скролл не подключён: 1 rs над горизонтом. */
-const DEFAULT_LOG_HEIGHT = 0
+/**
+ * Начальная высота. Там, где работает спуск по скроллу, страница открывается
+ * в начале дорожки — вдали от дыры. Без скролла (настройка «меньше движения»,
+ * тестовое окружение) корабль сразу стоит в 1 rs над горизонтом.
+ */
+const scrollDriven =
+  typeof window !== 'undefined' &&
+  typeof window.matchMedia === 'function' &&
+  !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+const DEFAULT_LOG_HEIGHT = scrollDriven ? MAX_LOG_HEIGHT : 0
 
 export function logHeightToProgress(logHeight: number): number {
   const progress =

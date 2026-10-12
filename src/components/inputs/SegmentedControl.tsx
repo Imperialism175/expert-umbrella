@@ -1,3 +1,4 @@
+import { motion } from 'motion/react'
 import { useId } from 'react'
 
 interface SegmentedControlProps<T extends string> {
@@ -32,7 +33,7 @@ export function SegmentedControl<T extends string>({
         {options.map((option) => (
           <label
             key={option.value}
-            className="cursor-pointer rounded-lg px-2 py-1.5 text-center text-sm text-ink-muted transition-colors has-checked:bg-white/10 has-checked:text-ink has-focus-visible:ring-2 has-focus-visible:ring-earth/50"
+            className="relative cursor-pointer rounded-lg px-2 py-1.5 text-center text-sm text-ink-muted transition-colors has-checked:text-ink has-focus-visible:ring-2 has-focus-visible:ring-earth/50"
           >
             <input
               type="radio"
@@ -41,7 +42,15 @@ export function SegmentedControl<T extends string>({
               checked={option.value === value}
               onChange={() => onChange(option.value)}
             />
-            {option.label}
+            {/* Подложка выбранного варианта переезжает между вариантами. */}
+            {option.value === value && (
+              <motion.span
+                layoutId={name}
+                transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+                className="absolute inset-0 rounded-lg bg-white/10"
+              />
+            )}
+            <span className="relative">{option.label}</span>
           </label>
         ))}
       </div>

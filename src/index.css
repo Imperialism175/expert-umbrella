@@ -97,6 +97,11 @@
     opacity: 1;
   }
 
+  :root[data-quality='low'] .hud-panel {
+    background: rgb(8 12 26 / 0.88);
+    backdrop-filter: none;
+  }
+
   /* Микроподпись с тонкой линией, уходящей вправо. */
   .hud-label {
     display: flex;

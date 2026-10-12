@@ -1,7 +1,9 @@
+import { motion } from 'motion/react'
 import type { KeyboardEvent, PointerEvent } from 'react'
 import { formatNumber } from '@/format/number'
 import { ru } from '@/i18n/ru'
 import type { ObjectMode } from '@/physics/compute'
+import { entrance } from './entrance'
 import {
   logHeightToProgress,
   MAX_LOG_HEIGHT,
@@ -58,7 +60,8 @@ export function DepthGauge({ mode }: DepthGaugeProps) {
   }
 
   return (
-    <div
+    <motion.div
+      {...entrance(0.45)}
       role="slider"
       tabIndex={0}
       aria-orientation="vertical"
@@ -106,6 +109,6 @@ export function DepthGauge({ mode }: DepthGaugeProps) {
         className="absolute right-[3px] size-2.5 -translate-y-1/2 rotate-45 bg-hole shadow-[0_0_12px_var(--color-hole)]"
         style={{ top: top(logHeight) }}
       />
-    </div>
+    </motion.div>
   )
 }

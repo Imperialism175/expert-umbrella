@@ -49,6 +49,7 @@ export const ControlDeck = memo(function ControlDeck({
   return (
     <HudPanel
       title={ru.hud.deck}
+      delay={0.15}
       onClose={onClose}
       className={`fixed z-20 overflow-x-hidden overflow-y-auto p-4 [scrollbar-width:thin] max-xl:inset-x-3 max-xl:bottom-3 max-xl:z-30 max-xl:max-h-[70dvh] max-xl:bg-deep/95 xl:top-24 xl:left-6 xl:max-h-[calc(100dvh-7.5rem)] xl:w-[340px] ${
         open ? '' : 'max-xl:hidden'

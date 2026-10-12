@@ -1,3 +1,4 @@
+import { motion } from 'motion/react'
 import { useCallback, useState, type Dispatch } from 'react'
 import { ru } from '@/i18n/ru'
 import type {
@@ -6,6 +7,7 @@ import type {
 } from '@/state/calculatorReducer'
 import { ControlDeck } from './ControlDeck'
 import { DepthGauge } from './DepthGauge'
+import { entrance } from './entrance'
 import { Readouts } from './Readouts'
 
 type MobilePanel = 'deck' | 'telemetry'
@@ -33,14 +35,17 @@ export function Hud({ state, dispatch, horizon }: HudProps) {
 
   return (
     <>
-      <header className="pointer-events-none fixed top-4 left-4 z-20 xl:top-7 xl:left-6">
+      <motion.header
+        {...entrance(0)}
+        className="pointer-events-none fixed top-4 left-4 z-20 xl:top-7 xl:left-6"
+      >
         <h1 className="font-display text-base font-medium tracking-wide xl:text-xl">
           {ru.app.title}
         </h1>
         <p className="mt-1 hidden max-w-xs text-xs text-ink-muted xl:block">
           {ru.app.subtitle}
         </p>
-      </header>
+      </motion.header>
 
       <div className="fixed top-11 left-4 z-20 flex gap-1.5 xl:hidden">
         <button

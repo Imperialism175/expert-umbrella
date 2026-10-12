@@ -1,6 +1,6 @@
 import { PerformanceMonitor } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { BlackHole } from './BlackHole'
 import { Effects } from './Effects'
 import { lowerTier, QUALITY, raiseTier, type QualityTier } from './quality'
@@ -16,6 +16,15 @@ const FPS_BOUNDS: [number, number] = [45, 58]
 export default function SpaceCanvas() {
   const [tier, setTier] = useState<QualityTier>('medium')
   const quality = QUALITY[tier]
+
+  // По этой метке CSS упрощает интерфейс: на низком качестве стеклянные
+  // панели не размывают фон — размытие поверх WebGL дорого.
+  useEffect(() => {
+    document.documentElement.dataset.quality = tier
+    return () => {
+      delete document.documentElement.dataset.quality
+    }
+  }, [tier])
 
   return (
     <Canvas

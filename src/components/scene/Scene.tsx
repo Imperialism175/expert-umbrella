@@ -1,3 +1,4 @@
+import { motion } from 'motion/react'
 import { Component, lazy, Suspense, type ReactNode } from 'react'
 import { ru } from '@/i18n/ru'
 import { StaticFallback } from './StaticFallback'
@@ -29,9 +30,16 @@ export function Scene() {
   return (
     <SceneBoundary fallback={<StaticFallback />}>
       <Suspense fallback={<StaticFallback />}>
-        <div role="img" aria-label={ru.scene.label} className="h-full w-full">
+        <motion.div
+          role="img"
+          aria-label={ru.scene.label}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1.4 }}
+          className="h-full w-full"
+        >
           <SpaceCanvas />
-        </div>
+        </motion.div>
       </Suspense>
     </SceneBoundary>
   )
