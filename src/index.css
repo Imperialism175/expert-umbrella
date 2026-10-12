@@ -1,0 +1,43 @@
+@import 'tailwindcss';
+
+/*
+ * Дизайн-токены. Сквозное цветовое кодирование:
+ * earth (голубой) — время на Земле, hole (янтарный) — время у чёрной дыры.
+ */
+@theme {
+  --color-void: #05060d;
+  --color-void-raised: #0c0e1a;
+  --color-panel: rgb(255 255 255 / 0.04);
+  --color-line: rgb(255 255 255 / 0.1);
+  --color-ink: #e8eaf2;
+  --color-ink-muted: #8a90a6;
+  --color-earth: #5cc8ff;
+  --color-hole: #ffb24a;
+  --color-hole-deep: #ff7a1a;
+  --color-danger: #ff5d6c;
+
+  --font-sans: system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  --font-mono: ui-monospace, 'Cascadia Mono', Consolas, 'SF Mono', monospace;
+
+  --radius-panel: 1.25rem;
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    min-height: 100dvh;
+    background: var(--color-void);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  #root {
+    min-height: 100dvh;
+  }
+}
